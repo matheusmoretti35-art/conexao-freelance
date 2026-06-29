@@ -161,6 +161,13 @@
   </div>
 
   <script>
+    // ==============================================================================
+    // CONFIGURAÇÃO DE CREDENCIAIS MASTER DO ADMINISTRADOR (EDITAR AQUI)
+    // ==============================================================================
+    const ADM_EMAIL = 'admin@conexaofreelance.com.br';
+    const ADM_SENHA = 'admin123'; // <-- Altere esta senha para a de sua preferência!
+    // ==============================================================================
+
     const API_URL = 'https://conexao-freelance-production.up.railway.app';
     let listaPrestadores = [];
 
@@ -175,7 +182,7 @@
       const email = document.getElementById('loginEmail').value;
       const senha = document.getElementById('loginSenha').value;
 
-      if (email === 'admin@conexaofreelance.com.br' && senha === 'admin123') {
+      if (email === ADM_EMAIL && senha === ADM_SENHA) {
         sessionStorage.setItem('adminToken', 'autenticado');
         document.getElementById('loginError').classList.add('hidden');
         exibirDashboard();
