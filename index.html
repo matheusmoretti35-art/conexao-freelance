@@ -50,22 +50,33 @@
           <div id="cadastroFeedback" class="hidden text-xs font-bold p-3 rounded-xl text-center"></div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Nome Completo</label>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Nome Completo *</label>
             <input type="text" id="regNome" required placeholder="Ex: Carlos Eduardo Silva" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Link da Foto de Perfil (URL)</label>
-            <input type="url" id="regFoto" placeholder="https://link-da-sua-foto.jpg (Opcional)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+            <label class="block text-xs font-bold text-slate-300 mb-1">Foto de Perfil (Selecionar Arquivo) *</label>
+            <input 
+              type="file" 
+              id="regFotoFile" 
+              accept="image/*" 
+              required 
+              onchange="previewFotoPerfil(event)" 
+              class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer"
+            >
+            <div id="fotoPreviewContainer" class="hidden mt-2 flex items-center gap-2">
+              <img id="imgPreview" src="" alt="Preview" class="w-12 h-12 rounded-xl object-cover border border-slate-700 shadow-md">
+              <span class="text-[11px] text-emerald-400 font-semibold">✓ Foto carregada com sucesso</span>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">WhatsApp (com DDD)</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1">WhatsApp (com DDD) *</label>
               <input type="text" id="regWhatsapp" required placeholder="(19) 99123-4567" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Profissão Principal</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Profissão Principal *</label>
               <select id="regProfissao" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
                 <option value="Eletricista">Eletricista</option>
                 <option value="Pintor">Pintor</option>
@@ -79,11 +90,11 @@
 
           <div class="grid grid-cols-3 gap-4">
             <div class="col-span-2">
-              <label class="block text-xs font-bold text-slate-300 mb-1">Cidade</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Cidade *</label>
               <input type="text" id="regCidade" required placeholder="Ex: Campinas" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">UF</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1">UF *</label>
               <input type="text" id="regEstado" required maxlength="2" value="SP" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase text-center focus:outline-none focus:border-blue-500">
             </div>
           </div>
@@ -216,11 +227,12 @@
   <script>
     const API_URL = 'https://conexao-freelance-production.up.railway.app';
     let prestadoresProducao = [
-      { id: '1', nome_completo: 'Carlos Eduardo Silva', whatsapp: '(19) 99123-4567', estado: 'SP', cidade: 'Campinas', profissao: 'Eletricista', status: 'ativo', foto_perfil_url: '' },
-      { id: '2', nome_completo: 'Mariana Lima Santos', whatsapp: '(19) 99876-5432', estado: 'SP', cidade: 'Campinas', profissao: 'Pintor', status: 'ativo', foto_perfil_url: '' }
+      { id: '1', nome_completo: 'Carlos Eduardo Silva', whatsapp: '(19) 99123-4567', estado: 'SP', cidade: 'Campinas', profissao: 'Eletricista', status: 'ativo', foto_perfil_url: 'logo.jpg' },
+      { id: '2', nome_completo: 'Mariana Lima Santos', whatsapp: '(19) 99876-5432', estado: 'SP', cidade: 'Campinas', profissao: 'Pintor', status: 'ativo', foto_perfil_url: 'logo.jpg' }
     ];
 
     let prestadorRecemCadastrado = null;
+    let fotoPerfilBase64 = '';
 
     document.addEventListener('DOMContentLoaded', () => { executarBuscaWeb(); });
 
@@ -232,11 +244,30 @@
 
     function fecharModalCadastro() { document.getElementById('modalCadastro').classList.add('hidden'); }
 
+    function previewFotoPerfil(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          fotoPerfilBase64 = e.target.result;
+          document.getElementById('imgPreview').src = fotoPerfilBase64;
+          document.getElementById('fotoPreviewContainer').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
     function realizarCadastroPrestador(e) {
       e.preventDefault();
+      
+      if (!fotoPerfilBase64) {
+        alert('Por favor, selecione uma foto de perfil válida.');
+        return;
+      }
+
       const payload = {
         nome_completo: document.getElementById('regNome').value,
-        foto_perfil_url: document.getElementById('regFoto').value,
+        foto_perfil_url: fotoPerfilBase64,
         whatsapp: document.getElementById('regWhatsapp').value,
         cidade: document.getElementById('regCidade').value,
         estado: document.getElementById('regEstado').value.toUpperCase(),
