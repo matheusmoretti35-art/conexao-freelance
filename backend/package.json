@@ -4,7 +4,7 @@
   "description": "Backend API para o aplicativo Conexão Freelance (Etapa 1 a 5)",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npx tsc",
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
   },
