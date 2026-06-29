@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conexão Freelance — Simulador do Ambiente Interativo (Web & App)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #2563eb; --primary-dark: #1d4ed8; --success: #059669; --warning: #f59e0b; --danger: #ef4444; --bg-slate: #f8fafc; --text-main: #0f172a; --text-muted: #64748b; --border-color: #e2e8f0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: #0b0f19; color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+    .top-header { background: #111827; border-bottom: 1px solid #1f2937; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
+    .top-header .logo-group { display: flex; align-items: center; gap: 12px; }
+    .top-header .logo-icon { background: linear-gradient(135deg, #2563eb, #3b82f6); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; }
+    .workspace { flex: 1; display: grid; grid-template-columns: 1fr 420px; gap: 24px; padding: 24px; max-width: 1600px; margin: 0 auto; width: 100%; }
+    .web-directory { background: var(--bg-slate); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #1f2937; }
+    .web-nav { background: #ffffff; padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .search-hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 32px 24px; color: white; text-align: center; }
+    .search-box { background: white; border-radius: 14px; padding: 8px; display: flex; gap: 8px; max-width: 750px; margin: 0 auto; }
+    .search-box select, .search-box input { flex: 1; border: none; padding: 12px; font-size: 14px; background: #f1f5f9; border-radius: 8px; }
+    .search-box button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    .directory-body { padding: 24px; display: grid; grid-template-columns: 1fr 300px; gap: 24px; flex: 1; }
+    .results-grid { display: flex; flex-direction: column; gap: 14px; }
+    .freelancer-card { background: white; border-radius: 14px; padding: 18px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .free-info { display: flex; gap: 16px; align-items: center; }
+    .avatar { width: 54px; height: 54px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: var(--primary); }
+    .btn-whatsapp { background: #25d366; color: white; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; }
+    .sidebar-ads { display: flex; flex-direction: column; gap: 16px; }
+    .ad-banner-card { background: white; border-radius: 14px; padding: 16px; border: 2px solid #f59e0b; position: relative; }
+    .smartphone-frame { width: 375px; height: 740px; background: #111827; border-radius: 44px; padding: 12px; position: relative; }
+    .notch { width: 140px; height: 24px; background: #111827; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; z-index: 100; }
+    .screen-content { background: var(--bg-slate); width: 100%; height: 100%; border-radius: 34px; overflow-y: auto; display: flex; flex-direction: column; }
+    .app-header { background: #ffffff; padding: 38px 16px 14px 16px; border-bottom: 1px solid var(--border-color); text-align: center; }
+    .app-body { padding: 16px; flex: 1; }
+    .app-card { background: white; padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .form-group input, .form-group select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 13px; }
+    .payment-simulator-controls { margin-top: 14px; background: #eff6ff; border: 1px dashed var(--primary); padding: 12px; border-radius: 10px; }
+    .sim-btn-group { display: flex; gap: 6px; }
+    .btn-sim-success { flex: 1; background: var(--success); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    .btn-sim-fail { flex: 1; background: var(--danger); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    .status-badge-app { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; margin-top: 6px; }
+    .status-pendente { background: #fef3c7; color: #b45309; }
+    .status-ativo { background: #dcfce7; color: #15803d; }
+    .status-inativo { background: #fee2e2; color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <header class="top-header">
+    <div class="logo-group">
+      <div class="logo-icon">CF</div>
+      <h1>Conexão Freelance — Live Environment Simulator</h1>
+    </div>
+  </header>
+  <main class="workspace">
+    <section class="web-directory">
+      <nav class="web-nav"><div class="brand">Conexão Freelance</div></nav>
+      <div class="search-hero">
+        <h2>Encontre os Melhores Autônomos da Sua Região</h2>
+        <div class="search-box">
+          <select id="filterEstado" onchange="executarBuscaWeb()"><option value="SP">SP</option></select>
+          <input type="text" id="filterCidade" value="Campinas" onkeyup="executarBuscaWeb()">
+          <select id="filterProfissao" onchange="executarBuscaWeb()"><option value="Eletricista">Eletricista</option></select>
+          <button onclick="executarBuscaWeb()">Buscar</button>
+        </div>
+      </div>
+      <div class="directory-body">
+        <div><div id="listaResultadosWeb" class="results-grid"></div></div>
+        <aside class="sidebar-ads">
+          <div id="bannerPatrocinadoDinamico" class="ad-banner-card">
+            <h4 id="adTitulo">Materiais de Construção Silva</h4>
+            <p id="adDescricao">Desconto especial em tintas e ferramentas!</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <section style="display: flex; justify-content: center;">
+      <div class="smartphone-frame">
+        <div class="notch"></div>
+        <div class="screen-content">
+          <div class="app-header"><h3>Conexão Freelance</h3></div>
+          <div class="app-body">
+            <div class="app-card">
+              <h4>Cadastro de Perfil</h4>
+              <div class="form-group"><label>Nome</label><input type="text" id="appNome" value="Roberto Alves"></div>
+              <div class="form-group"><label>WhatsApp</label><input type="text" id="appWhatsapp" value="(19) 99887-6655"></div>
+              <div class="form-group"><label>Cidade</label><input type="text" id="appCidade" value="Campinas"><input type="text" id="appEstado" value="SP"></div>
+              <div class="form-group"><label>Profissão</label><select id="appProfissao"><option value="Eletricista">Eletricista</option></select></div>
+              <div style="text-align: center;"><div id="appStatusDisplay" class="status-badge-app status-pendente">PENDENTE</div></div>
+              <div class="payment-simulator-controls">
+                <div class="sim-btn-group">
+                  <button class="btn-sim-success" onclick="simularPagamento('pago')">Aprovar PIX</button>
+                  <button class="btn-sim-fail" onclick="simularPagamento('expirado')">Falha</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    let bancoDadosPrestadores = [{ id: '1', nome: 'Carlos Eduardo', whatsapp: '(19) 99123-4567', estado: 'SP', cidade: 'Campinas', profissao: 'Eletricista', status: 'ativo' }];
+    document.addEventListener('DOMContentLoaded', () => { executarBuscaWeb(); });
+    function executarBuscaWeb() {
+      const resultados = bancoDadosPrestadores.filter(p => p.status === 'ativo');
+      renderizarResultadosWeb(resultados);
+    }
+    function renderizarResultadosWeb(lista) {
+      const container = document.getElementById('listaResultadosWeb');
+      container.innerHTML = lista.map(p => `<div class="freelancer-card"><div><h4>${p.nome}</h4><p>${p.cidade} - ${p.estado}</p></div><a href="#" class="btn-whatsapp">WhatsApp</a></div>`).join('');
+    }
+    function simularPagamento(s) {
+      let p = bancoDadosPrestadores[0];
+      p.status = s === 'pago' ? 'ativo' : 'inativo';
+      document.getElementById('appStatusDisplay').innerText = s.toUpperCase();
+      executarBuscaWeb();
+    }
+  </script>
+</body>
+</html>

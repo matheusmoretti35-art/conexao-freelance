@@ -1,0 +1,54 @@
+# ==============================================================================
+# PROJETO: Conexão Freelance
+# ARQUIVO: docker-compose.yml
+# DESCRIÇÃO: Orquestração de contêineres Docker para desenvolvimento e testes integrados
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # 1. Banco de Dados PostgreSQL 15 com extensões e inicialização automática
+  postgres:
+    image: postgres:15-alpine
+    container_name: conexao_freelance_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password_2026
+      POSTGRES_DB: conexao_freelance_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./database/etapa2.sql:/docker-entrypoint-initdb.d/02_etapa2.sql
+      - ./database/etapa3.sql:/docker-entrypoint-initdb.d/03_etapa3.sql
+      - ./database/etapa4.sql:/docker-entrypoint-initdb.d/04_etapa4.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d conexao_freelance_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Backend API Node.js / Express
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: conexao_freelance_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://postgres:postgres_password_2026@postgres:5432/conexao_freelance_db
+      WEBHOOK_SECRET: chave_secreta_webhook_conexao_freelance_2026
+      META_PIXEL_ID: "123456789012345"
+      META_ACCESS_TOKEN: "EAAG_MOCK_TOKEN"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
