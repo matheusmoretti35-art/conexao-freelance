@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "routes": [
+    { "src": "/admin", "dest": "/web/admin.html" },
+    { "src": "/admin.html", "dest": "/web/admin.html" },
+    { "src": "/simulador", "dest": "/simulador.html" },
+    { "src": "/simulador.html", "dest": "/simulador.html" },
+    { "src": "/(.*)", "dest": "/web/$1" }
+  ]
+}
