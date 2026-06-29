@@ -1,13 +1,13 @@
 # ==============================================================================
 # PROJETO: Conexão Freelance
 # ARQUIVO: backend/Dockerfile
-# DESCRIÇÃO: Dockerfile de produção multietapa (Multi-stage build) para Node.js
+# DESCRIÇÃO: Dockerfile otimizado e resiliente para Railway / Produção
 # ==============================================================================
 
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 RUN npm run build
 
@@ -15,7 +15,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install --only=production
 COPY --from=builder /app/dist ./dist
 
 EXPOSE 3000
