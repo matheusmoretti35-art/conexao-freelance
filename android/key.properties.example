@@ -1,0 +1,10 @@
+# ==============================================================================
+# PROJETO: Conexão Freelance
+# ARQUIVO: android/key.properties.example
+# DESCRIÇÃO: Exemplo de configuração da chave de assinatura de produção do Android
+# ==============================================================================
+
+storePassword=SuaSenhaDaKeystoreAqui123
+keyPassword=SuaSenhaDaChaveAqui123
+keyAlias=conexao-freelance-key-alias
+storeFile=../conexao-freelance-release.keystore

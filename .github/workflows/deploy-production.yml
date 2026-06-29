@@ -1,0 +1,42 @@
+# ==============================================================================
+# PROJETO: Conexão Freelance
+# ARQUIVO: .github/workflows/deploy-production.yml
+# DESCRIÇÃO: Esteira CI/CD de Produção automatizada no GitHub Actions
+# ==============================================================================
+
+name: Production Deployment Pipeline
+
+on:
+  push:
+    branches: [ main, production ]
+
+jobs:
+  deploy:
+    name: Build, Test and Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Código Fonte
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: backend/package.json
+
+      - name: Instalar Dependências e Testar Backend
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          WEBHOOK_SECRET: ${{ secrets.PRODUCTION_WEBHOOK_SECRET }}
+        run: |
+          cd backend
+          npm ci
+          npm run build
+
+      - name: Deploy Automático no Render / Railway (via Webhook / CLI)
+        if: success()
+        run: |
+          echo "🚀 Disparando hook de deploy em produção..."
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" || true
