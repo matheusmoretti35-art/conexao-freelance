@@ -39,6 +39,7 @@ interface IFormState {
   cidade: string;
   estado: string;
   profissao: string;
+  fotoPerfilUrl: string;
 }
 
 export const CadastroPrestadorScreen: React.FC = () => {
@@ -49,6 +50,7 @@ export const CadastroPrestadorScreen: React.FC = () => {
     cidade: '',
     estado: '',
     profissao: '',
+    fotoPerfilUrl: '',
   });
 
   // Estado para controle de modal/dropdown de profissão
@@ -143,6 +145,7 @@ export const CadastroPrestadorScreen: React.FC = () => {
           cidade: formData.cidade,
           estado: formData.estado,
           profissao: formData.profissao,
+          foto_perfil_url: formData.fotoPerfilUrl,
         }),
       });
 
@@ -157,7 +160,7 @@ export const CadastroPrestadorScreen: React.FC = () => {
               text: 'OK',
               onPress: () => {
                 // Limpa o formulário após sucesso
-                setFormData({ nomeCompleto: '', whatsapp: '', cidade: '', estado: '', profissao: '' });
+                setFormData({ nomeCompleto: '', whatsapp: '', cidade: '', estado: '', profissao: '', fotoPerfilUrl: '' });
               },
             },
           ]
@@ -197,6 +200,16 @@ export const CadastroPrestadorScreen: React.FC = () => {
               onChangeText={(val) => handleInputChange('nomeCompleto', val)}
             />
             {erros.nomeCompleto ? <Text style={styles.errorText}>{erros.nomeCompleto}</Text> : null}
+
+            {/* Campo Foto de Perfil */}
+            <Text style={styles.label}>Link da Foto de Perfil (URL)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="https://sua-foto-aqui.jpg (Opcional)"
+              placeholderTextColor="#94A3B8"
+              value={formData.fotoPerfilUrl}
+              onChangeText={(val) => handleInputChange('fotoPerfilUrl', val)}
+            />
 
             {/* Campo WhatsApp */}
             <Text style={styles.label}>WhatsApp / Celular *</Text>
