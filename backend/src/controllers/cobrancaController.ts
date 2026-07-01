@@ -8,10 +8,14 @@ import { Request, Response } from 'express';
 import crypto from 'crypto';
 import { pool } from '../db';
 
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'chave_secreta_webhook_conexao_freelance_2026';
+const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
+const ASAAS_ENV = process.env.ASAAS_ENV || 'sandbox'; // 'sandbox' ou 'production'
+const ASAAS_URL = ASAAS_ENV === 'production' 
+  ? 'https://www.asaas.com/api/v3' 
+  : 'https://sandbox.asaas.com/api/v3';
 
 /**
- * 1. ROTA DE GERAÇÃO DE CHECKOUT PIX (R$ 29,90)
+ * 1. ROTA DE GERAÇÃO DE CHECKOUT DINEÂMICO (PIX + CARTÃO ASAAS)
  * Endpoint: POST /api/pagamentos/checkout
  */
 export const gerarCheckout = async (req: Request, res: Response): Promise<Response> => {
@@ -20,37 +24,81 @@ export const gerarCheckout = async (req: Request, res: Response): Promise<Respon
     const { prestador_id, metodo_pagamento = 'pix' } = req.body;
 
     if (!prestador_id) {
-      return res.status(400).json({ sucesso: false, mensagem: 'O prestador_id é obrigatório.' });
+      return res.status(400).json({ sucesso: false, message: 'O prestador_id é obrigatório.' });
     }
 
-    // Verifica existência do prestador
-    const prestadorRes = await client.query('SELECT id FROM prestadores WHERE id = $1', [prestador_id]);
+    // Busca dados do prestador para registrar cobrança real
+    const prestadorRes = await client.query('SELECT id, nome_completo, whatsapp FROM prestadores WHERE id = $1', [prestador_id]);
     if (prestadorRes.rows.length === 0) {
-      return res.status(404).json({ sucesso: false, mensagem: 'Prestador não encontrado.' });
+      return res.status(404).json({ sucesso: false, message: 'Prestador não encontrado.' });
     }
+    const prestador = prestadorRes.rows[0];
 
-    // Gera IDs randômicos e Payload PIX simulado do Gateway
-    const mockTxId = `tx_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-    const mockPixPayload = `00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540529.905802BR5925CONEXAO FREELANCE LTDA6009SAO PAULO6304E2CA`;
+    let mockTxId = `tx_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    let checkoutUrl = '';
+    let pixCopiaCola = `00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540529.905802BR5925CONEXAO FREELANCE LTDA6009SAO PAULO6304E2CA`;
+
+    // Se a chave da API do Asaas estiver configurada no Railway, gera cobrança oficial de verdade!
+    if (ASAAS_API_KEY) {
+      try {
+        // 1. Cria ou recupera o cliente no Asaas
+        const custRes = await fetch(`${ASAAS_URL}/customers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'access_token': ASAAS_API_KEY },
+          body: JSON.stringify({
+            name: prestador.nome_completo,
+            mobilePhone: prestador.whatsapp.replace(/\D/g, '')
+          })
+        });
+        const custData = await custRes.json();
+        const customerId = custData.id;
+
+        // 2. Cria a cobrança híbrida (PIX + Cartão) no Asaas
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 3); // Vencimento em 3 dias
+
+        const payRes = await fetch(`${ASAAS_URL}/payments`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'access_token': ASAAS_API_KEY },
+          body: JSON.stringify({
+            customer: customerId,
+            billingType: 'UNDEFINED', // Permite Cartão de Crédito, PIX ou Boleto no checkout seguro
+            value: 29.90,
+            dueDate: dueDate.toISOString().split('T')[0],
+            description: 'Assinatura Mensal Conexão Freelance',
+            externalReference: prestador.id
+          })
+        });
+        const payData = await payRes.json();
+
+        if (payData.id) {
+          mockTxId = payData.id;
+          checkoutUrl = payData.invoiceUrl; // Link de checkout oficial do Asaas
+          pixCopiaCola = payData.pixCopiaCola || checkoutUrl; // Copia e cola ou fallback
+        }
+      } catch (err) {
+        console.error('Falha de conexão com Asaas API, rodando fallback simulado:', err);
+      }
+    }
 
     const dataProxima = new Date();
     dataProxima.setMonth(dataProxima.getMonth() + 1);
 
     await client.query('BEGIN');
 
-    // 1. Registra Assinatura
+    // 1. Registra Assinatura no banco local
     const assRes = await client.query(
       `INSERT INTO assinaturas (prestador_id, gateway_subscription_id, valor, metodo_pagamento, status, data_proxima_cobranca)
        VALUES ($1, $2, 29.90, $3, 'aguardando_pagamento', $4) RETURNING id;`,
       [prestador_id, `sub_${mockTxId}`, metodo_pagamento, dataProxima]
     );
 
-    // 2. Registra Transação / Fatura
+    // 2. Registra Transação no banco local
     const txRes = await client.query(
       `INSERT INTO transacoes (assinatura_id, prestador_id, gateway_transaction_id, valor, metodo_pagamento, status, pix_copia_cola)
        VALUES ($1, $2, $3, 29.90, $4, 'aguardando_pagamento', $5)
        RETURNING id, gateway_transaction_id, pix_copia_cola, status;`,
-      [assRes.rows[0].id, prestador_id, mockTxId, metodo_pagamento, mockPixPayload]
+      [assRes.rows[0].id, prestador_id, mockTxId, metodo_pagamento, pixCopiaCola]
     );
 
     await client.query('COMMIT');
@@ -58,12 +106,15 @@ export const gerarCheckout = async (req: Request, res: Response): Promise<Respon
     return res.status(201).json({
       sucesso: true,
       mensagem: 'Cobrança gerada com sucesso. Aguardando pagamento.',
-      dados: txRes.rows[0],
+      dados: {
+        ...txRes.rows[0],
+        checkout_url: checkoutUrl // Envia o link da fatura do Asaas para pagamentos via cartão/PIX
+      },
     });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Erro ao gerar checkout:', error);
-    return res.status(500).json({ sucesso: false, mensagem: 'Falha ao gerar cobrança de assinatura.' });
+    return res.status(500).json({ sucesso: false, message: 'Falha ao gerar cobrança de assinatura.' });
   } finally {
     client.release();
   }

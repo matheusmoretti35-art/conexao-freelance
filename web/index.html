@@ -146,8 +146,16 @@
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=180&180&data=00020101021226870014br.gov.bcb.pix2565conexaofreelance2990" alt="QR Code PIX" class="w-44 h-44 object-contain">
           </div>
 
+          <!-- Link do Asaas para Cartão/PIX -->
+          <div id="containerCheckoutAsaas" class="hidden w-full space-y-1">
+            <a id="linkCheckoutAsaas" href="#" target="_blank" class="w-full inline-block bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-md text-center">
+              💳 Pagar via Cartão de Crédito ou PIX Oficial
+            </a>
+            <span class="block text-[10px] text-slate-500">Clique acima para abrir o checkout seguro e pagar com Cartão de Crédito.</span>
+          </div>
+
           <div class="w-full space-y-2">
-            <label class="block text-left text-xs font-bold text-slate-400">Código PIX Copia e Cola:</label>
+            <label class="block text-left text-xs font-bold text-slate-400">Ou use o Código PIX Copia e Cola:</label>
             <div class="flex gap-2">
               <input type="text" readonly id="pixCopiaCola" value="00020101021226870014br.gov.bcb.pix2565conexaofreelance2990" class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-xl px-3 py-3 flex-1 font-mono focus:outline-none" />
               <button onclick="copiarPix()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-3 rounded-xl transition-all">Copiar</button>
@@ -369,6 +377,14 @@
           document.getElementById('pixCopiaCola').value = res.dados.pix_copia_cola;
           qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(res.dados.pix_copia_cola)}`;
           
+          // Exibe botão de Cartão se checkout_url do Asaas existir
+          if (res.dados.checkout_url) {
+            document.getElementById('containerCheckoutAsaas').classList.remove('hidden');
+            document.getElementById('linkCheckoutAsaas').href = res.dados.checkout_url;
+          } else {
+            document.getElementById('containerCheckoutAsaas').classList.add('hidden');
+          }
+
           // Inicia escuta inteligente (polling) para ativação imediata após pagamento
           iniciarPollingStatus(res.dados.gateway_transaction_id);
         } else {
