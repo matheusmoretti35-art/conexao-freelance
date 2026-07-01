@@ -15,6 +15,7 @@ import {
   Clipboard,
   SafeAreaView,
 } from 'react-native';
+import { useAnalyticsTracking } from '../hooks/useAnalyticsTracking';
 
 interface ICheckoutProps {
   prestadorId: string;
@@ -22,6 +23,7 @@ interface ICheckoutProps {
 }
 
 export const CheckoutAssinaturaScreen: React.FC<ICheckoutProps> = ({ prestadorId, onPagamentoConfirmado }) => {
+  const { rastrearEvento } = useAnalyticsTracking();
   const [carregando, setCarregando] = useState<boolean>(true);
   const [pixCode, setPixCode] = useState<string>('');
   const [transactionId, setTransactionId] = useState<string>('');
@@ -72,6 +74,9 @@ export const CheckoutAssinaturaScreen: React.FC<ICheckoutProps> = ({ prestadorId
       const result = await response.json();
 
       if (result.sucesso && result.status === 'pago') {
+        // Dispara evento Purchase
+        rastrearEvento('Purchase', {}, { value: 29.90, currency: 'BRL', content_name: 'Plano Mensal Autônomo' });
+
         Alert.alert('🎉 Pagamento Aprovado!', 'Seu perfil profissional foi ativado com sucesso. Clientes já podem te encontrar!', [
           { text: 'Ir para Meu Perfil', onPress: onPagamentoConfirmado },
         ]);

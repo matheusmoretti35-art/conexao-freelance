@@ -18,6 +18,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useAnalyticsTracking } from '../hooks/useAnalyticsTracking';
 
 // Lista pré-definida de profissões para o seletor visual
 const LISTA_PROFISSOES = [
@@ -43,6 +44,8 @@ interface IFormState {
 }
 
 export const CadastroPrestadorScreen: React.FC = () => {
+  const { rastrearEvento } = useAnalyticsTracking();
+
   // Estado principal do formulário
   const [formData, setFormData] = useState<IFormState>({
     nomeCompleto: '',
@@ -152,6 +155,9 @@ export const CadastroPrestadorScreen: React.FC = () => {
       const resultado = await resposta.json();
 
       if (resposta.ok && resultado.sucesso) {
+        // Dispara evento Lead com profissão selecionada no app
+        rastrearEvento('Lead', { phone: formData.whatsapp }, { content_name: formData.profissao, currency: 'BRL', value: 29.90 });
+
         Alert.alert(
           '🎉 Cadastro Recebido!',
           'Seu perfil foi registrado com sucesso e está pendente de ativação para começar a receber clientes.',
