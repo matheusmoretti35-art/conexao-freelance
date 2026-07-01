@@ -1,18 +1,37 @@
 import { Platform } from 'react-native';
 
+// Carregamento dinâmico e seguro para evitar erros de compilação caso as dependências ainda não estejam vinculadas
+let requestTrackingPermission: any = null;
+let Settings: any = null;
+let AppEventsLogger: any = null;
+
+try {
+  const attLib = require('react-native-tracking-transparency');
+  requestTrackingPermission = attLib.requestTrackingPermission;
+} catch (e) {
+  // Não instalado
+}
+
+try {
+  const fbSdk = require('react-native-fbsdk-next');
+  Settings = fbSdk.Settings;
+  AppEventsLogger = fbSdk.AppEventsLogger;
+} catch (e) {
+  // Não instalado
+}
+
 /**
  * Solicita permissão de ATT (App Tracking Transparency) no iOS de forma nativa.
- * Em produção real, utiliza a biblioteca 'react-native-tracking-transparency'.
  */
 export const solicitarPermissaoATT = async (): Promise<boolean> => {
   if (Platform.OS !== 'ios') return true;
   
   try {
-    // Simulação do comportamento nativo do iOS para homologação
-    console.log('🔍 [iOS ATT] Verificando permissão de rastreamento do usuário...');
-    // Em produção: 
-    // const status = await requestTrackingPermission();
-    // return status === 'authorized';
+    if (requestTrackingPermission) {
+      const status = await requestTrackingPermission();
+      return status === 'authorized';
+    }
+    console.log('🔍 [iOS ATT Simulação] Permissão ATT verificada e concedida por padrão.');
     return true; 
   } catch (error) {
     console.warn('Erro ao solicitar permissão ATT:', error);
@@ -38,7 +57,13 @@ export const useAnalyticsTracking = () => {
     }
 
     try {
-      // Endpoint unificado do Railway
+      // 1. Disparo Client-Side do SDK do Facebook (se estiver instalado e configurado no App)
+      if (AppEventsLogger) {
+        AppEventsLogger.logEvent(eventName, customData);
+        console.log(`📱 [Meta SDK Mobile] Evento ${eventName} disparado via SDK.`);
+      }
+
+      // 2. Disparo Server-Side via CAPI do Railway
       await fetch('https://conexao-freelance-production.up.railway.app/api/analytics/event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
