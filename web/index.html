@@ -161,7 +161,7 @@
             <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
             Aguardando aprovação do pagamento...
           </div>
-          <button onclick="simularAprovacaoPix()" class="bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/40 text-emerald-300 hover:text-white font-bold text-[11px] px-4 py-2 rounded-lg transition-all w-full">
+          <button id="btnSimulacaoPix" onclick="simularAprovacaoPix()" class="hidden bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/40 text-emerald-300 hover:text-white font-bold text-[11px] px-4 py-2 rounded-lg transition-all w-full">
             Simular Aprovação Automática (Homologação)
           </button>
         </div>
@@ -275,13 +275,27 @@
       rastrearEvento('ContactClick', { phone: whatsapp }, { content_name: profissao });
     }
 
+    let pollingInterval = null;
+
     function abrirModalCadastro() {
+      // Controla a exibição do botão de simulação baseado no parâmetro ?debug=true da URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const isDebug = urlParams.get('debug') === 'true';
+      const simBtn = document.getElementById('btnSimulacaoPix');
+      if (simBtn) {
+        if (isDebug) simBtn.classList.remove('hidden');
+        else simBtn.classList.add('hidden');
+      }
+
       document.getElementById('etapaFormulario').classList.remove('hidden');
       document.getElementById('etapaCheckout').classList.add('hidden');
       document.getElementById('modalCadastro').classList.remove('hidden');
     }
 
-    function fecharModalCadastro() { document.getElementById('modalCadastro').classList.add('hidden'); }
+    function fecharModalCadastro() {
+      if (pollingInterval) clearInterval(pollingInterval);
+      document.getElementById('modalCadastro').classList.add('hidden');
+    }
 
     function previewFotoPerfil(event) {
       const file = event.target.files[0];
@@ -326,14 +340,64 @@
         // Dispara Lead de Cadastro
         rastrearEvento('Lead', { phone: payload.whatsapp }, { content_name: payload.profissao, content_category: 'Onboarding' });
 
-        document.getElementById('etapaFormulario').classList.add('hidden');
-        document.getElementById('etapaCheckout').classList.remove('hidden');
+        // Gera a cobrança real dinamicamente
+        gerarCobrancaPixReal(prestadorRecemCadastrado.id);
       })
       .catch(() => {
         prestadorRecemCadastrado = { id: 'temp_' + Date.now(), ...payload, status: 'pendente' };
         document.getElementById('etapaFormulario').classList.add('hidden');
         document.getElementById('etapaCheckout').classList.remove('hidden');
       });
+    }
+
+    function gerarCobrancaPixReal(prestadorId) {
+      document.getElementById('etapaFormulario').classList.add('hidden');
+      document.getElementById('etapaCheckout').classList.remove('hidden');
+      
+      const qrImage = document.querySelector('#etapaCheckout img');
+      qrImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=loading';
+
+      fetch(`${API_URL}/api/pagamentos/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prestador_id: prestadorId, metodo_pagamento: 'pix' })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.sucesso && res.dados) {
+          // Atualiza dados reais do PIX retornado pelo gateway na nuvem
+          document.getElementById('pixCopiaCola').value = res.dados.pix_copia_cola;
+          qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(res.dados.pix_copia_cola)}`;
+          
+          // Inicia escuta inteligente (polling) para ativação imediata após pagamento
+          iniciarPollingStatus(res.dados.gateway_transaction_id);
+        } else {
+          alert('⚠️ Erro ao gerar transação PIX. Entre em contato com o suporte.');
+        }
+      })
+      .catch(() => {
+        alert('⚠️ Erro de conexão ao servidor de pagamento.');
+      });
+    }
+
+    function iniciarPollingStatus(txId) {
+      if (pollingInterval) clearInterval(pollingInterval);
+      pollingInterval = setInterval(() => {
+        fetch(`${API_URL}/api/pagamentos/status?tx=${txId}`)
+          .then(r => r.json())
+          .then(res => {
+            if (res.sucesso && res.status === 'pago') {
+              clearInterval(pollingInterval);
+              
+              // Dispara evento Purchase
+              rastrearEvento('Purchase', { phone: prestadorRecemCadastrado.whatsapp }, { value: 29.90, currency: 'BRL', content_name: prestadorRecemCadastrado.profissao });
+
+              alert('🎉 PIX Confirmado com sucesso! Seu perfil já está ativo e listado nas buscas da sua região.');
+              fecharModalCadastro();
+              executarBuscaWeb();
+            }
+          });
+      }, 4000);
     }
 
     function copiarPix() {
