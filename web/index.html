@@ -8,94 +8,118 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style> body { font-family: 'Inter', sans-serif; } </style>
-  
-  <!-- Meta Pixel Code -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '123456789012345'); // Pixel ID de Homologação/Produção
-    fbq('track', 'PageView');
-  </script>
-  <noscript>
-    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=123456789012345&ev=PageView&noscript=1"/>
-  </noscript>
-  <!-- End Meta Pixel Code -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+    }
+    .glow-effect {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, rgba(0,0,0,0) 70%);
+      filter: blur(40px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glow-emerald {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(5,150,105,0.1) 0%, rgba(0,0,0,0) 70%);
+      filter: blur(40px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    /* Efeito de Vidro Flutuante */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Animação Hover Suave */
+    .premium-card {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .premium-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 0 12px 30px -10px rgba(37, 99, 235, 0.2);
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+<body class="bg-[#030712] text-slate-100 min-h-screen flex flex-col antialiased relative overflow-x-hidden">
 
-  <!-- NAVBAR OFICIAL -->
-  <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-6 py-4">
+  <!-- Pontos de Brilho de Fundo (Glows Neon) -->
+  <div class="glow-effect top-12 left-10"></div>
+  <div class="glow-emerald top-[400px] right-20"></div>
+
+  <!-- NAVBAR OFICIAL PREMIUM -->
+  <header class="bg-[#090d16]/75 backdrop-blur-xl border-b border-slate-800/60 sticky top-0 z-50 px-6 py-4">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <img src="logo.jpg" alt="Conexão Freelance Logo" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-blue-500/30 border border-slate-700">
+        <img src="logo.jpg" alt="Conexão Freelance Logo" class="w-11 h-11 rounded-xl object-cover shadow-lg shadow-blue-500/20 border border-slate-700/80">
         <div>
-          <span class="font-extrabold text-lg text-white tracking-tight">Conexão Freelance</span>
-          <span class="block text-[10px] font-bold text-blue-400 uppercase tracking-wider">Diretório de Serviços Autônomos</span>
+          <span class="font-black text-xl text-white tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">Conexão Freelance</span>
+          <span class="block text-[9px] font-extrabold text-blue-400 uppercase tracking-widest">Diretório de Elite</span>
         </div>
       </div>
 
       <div class="flex items-center gap-4">
-        <button onclick="abrirModalCadastro()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-600/20 flex items-center gap-1.5">
+        <button onclick="abrirModalCadastro()" class="bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs font-bold px-5 py-3 rounded-2xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 transform active:scale-95">
           <span>👷</span> Sou Profissional (Cadastrar)
         </button>
-        <a href="/admin.html" class="text-xs text-slate-400 hover:text-white transition-colors font-medium">Área ADM</a>
+        <a href="/admin.html" class="text-xs text-slate-400 hover:text-white transition-colors font-semibold border-l border-slate-800 pl-4 py-1.5">Área ADM</a>
       </div>
     </div>
   </header>
 
   <!-- MODAL DE CADASTRO + CHECKOUT PIX INTEGRADO -->
-  <div id="modalCadastro" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 p-6 sm:p-8 rounded-3xl max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
-      <button onclick="fecharModalCadastro()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold p-2">✕</button>
+  <div id="modalCadastro" class="hidden fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+    <div class="bg-[#0b0f19] border border-slate-800/80 p-6 sm:p-8 rounded-3xl max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button onclick="fecharModalCadastro()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold p-2 transition-transform hover:scale-110">✕</button>
       
       <!-- ETAPA 1: FORMULÁRIO DE CADASTRO -->
       <div id="etapaFormulario" class="space-y-6">
         <div class="space-y-1">
-          <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Passo 1 de 2: Informações</span>
-          <h3 class="text-2xl font-black text-white">Seja Encontrado na Sua Cidade</h3>
-          <p class="text-xs text-slate-400">Receba contatos diretos no seu WhatsApp de clientes buscando seus serviços.</p>
+          <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Passo 1 de 2: Informações</span>
+          <h3 class="text-2xl font-extrabold text-white">Anuncie Seus Serviços na Sua Cidade</h3>
+          <p class="text-xs text-slate-400">Receba contatos diretos e fechamento no seu WhatsApp sem intermediários ou taxas por orçamento.</p>
         </div>
 
         <form onsubmit="realizarCadastroPrestador(event)" class="space-y-4">
           <div id="cadastroFeedback" class="hidden text-xs font-bold p-3 rounded-xl text-center"></div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Nome Completo *</label>
-            <input type="text" id="regNome" required placeholder="Ex: Carlos Eduardo Silva" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+            <label class="block text-xs font-bold text-slate-300 mb-1.5">Nome Completo *</label>
+            <input type="text" id="regNome" required placeholder="Ex: Carlos Eduardo Silva" class="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50">
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Foto de Perfil (Selecionar Arquivo) *</label>
+            <label class="block text-xs font-bold text-slate-300 mb-1.5">Foto de Perfil (Selecionar Arquivo) *</label>
             <input 
               type="file" 
               id="regFotoFile" 
               accept="image/*" 
               required 
               onchange="previewFotoPerfil(event)" 
-              class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer"
+              class="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer"
             >
-            <div id="fotoPreviewContainer" class="hidden mt-2 flex items-center gap-2">
+            <div id="fotoPreviewContainer" class="hidden mt-2.5 flex items-center gap-3 bg-slate-950 p-2.5 rounded-2xl border border-slate-800/80">
               <img id="imgPreview" src="" alt="Preview" class="w-12 h-12 rounded-xl object-cover border border-slate-700 shadow-md">
-              <span class="text-[11px] text-emerald-400 font-semibold">✓ Foto carregada com sucesso</span>
+              <span class="text-[11px] text-emerald-400 font-bold">✓ Foto selecionada com sucesso</span>
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">WhatsApp (com DDD) *</label>
-              <input type="text" id="regWhatsapp" required placeholder="(19) 99123-4567" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">WhatsApp (com DDD) *</label>
+              <input type="text" id="regWhatsapp" required placeholder="(19) 99123-4567" class="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Profissão Principal *</label>
-              <select id="regProfissao" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Profissão Principal *</label>
+              <select id="regProfissao" class="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-blue-500">
                 <option value="Eletricista">Eletricista</option>
                 <option value="Pintor">Pintor</option>
                 <option value="Pedreiro">Pedreiro</option>
@@ -108,26 +132,26 @@
 
           <div class="grid grid-cols-3 gap-4">
             <div class="col-span-2">
-              <label class="block text-xs font-bold text-slate-300 mb-1">Cidade *</label>
-              <input type="text" id="regCidade" required placeholder="Ex: Campinas" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Cidade *</label>
+              <input type="text" id="regCidade" required placeholder="Ex: Campinas" class="w-full bg-slate-900/60 border border-slate-700 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-blue-500">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">UF *</label>
-              <input type="text" id="regEstado" required maxlength="2" value="SP" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white uppercase text-center focus:outline-none focus:border-blue-500">
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">UF *</label>
+              <input type="text" id="regEstado" required maxlength="2" value="SP" class="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-white uppercase text-center focus:outline-none focus:border-blue-500">
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">Resumo dos Seus Serviços</label>
-            <textarea id="regDescricao" rows="2" placeholder="Ex: Instalações elétricas residenciais e comerciais, padrão CPFL, quadros..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
+            <label class="block text-xs font-bold text-slate-300 mb-1.5">Resumo dos Seus Serviços</label>
+            <textarea id="regDescricao" rows="2" placeholder="Ex: Instalações elétricas residenciais e comerciais, padrão CPFL, quadros..." class="w-full bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
           </div>
 
-          <div class="bg-blue-950/40 border border-blue-500/30 p-4 rounded-2xl space-y-2 text-center">
-            <div class="text-xs text-blue-300 font-medium">Assinatura Mensal Recorrente</div>
-            <div class="text-2xl font-black text-white">R$ 29,90 <span class="text-xs font-normal text-slate-400">/ mês</span></div>
+          <div class="bg-blue-950/30 border border-blue-500/20 p-4 rounded-2xl space-y-1 text-center">
+            <div class="text-xs text-blue-300 font-semibold uppercase tracking-wider">Assinatura Mensal Recorrente</div>
+            <div class="text-3xl font-black text-white">R$ 29,90 <span class="text-xs font-normal text-slate-400">/ mês</span></div>
           </div>
 
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-600/30">
+          <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-sm py-4 rounded-xl transition-all shadow-lg shadow-emerald-600/30 transform active:scale-98">
             Ir para o Pagamento (PIX) ➡️
           </button>
         </form>
@@ -138,11 +162,11 @@
         <div class="space-y-1">
           <span class="bg-blue-500/10 text-blue-400 border border-blue-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Passo 2 de 2: Checkout</span>
           <h3 class="text-2xl font-black text-white">Aprovação da Assinatura</h3>
-          <p class="text-xs text-slate-400">Pague o PIX de R$ 29,90 para ativar seu anúncio na busca.</p>
+          <p class="text-xs text-slate-400">Pague o valor de R$ 29,90 para ativar seu anúncio na busca.</p>
         </div>
 
         <div class="flex flex-col items-center justify-center space-y-4">
-          <div class="bg-white p-3 rounded-2xl border-4 border-emerald-500 shadow-xl">
+          <div class="bg-white p-3.5 rounded-3xl border-4 border-emerald-500 shadow-xl">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=180&180&data=00020101021226870014br.gov.bcb.pix2565conexaofreelance2990" alt="QR Code PIX" class="w-44 h-44 object-contain">
           </div>
 
@@ -177,44 +201,53 @@
     </div>
   </div>
 
-  <!-- HERO SECTION DE BUSCA -->
-  <section id="buscar" class="bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950 py-16 px-6 border-b border-slate-800/80">
-    <div class="max-w-4xl mx-auto text-center space-y-4">
+  <!-- HERO SECTION DE BUSCA GLASSMORPHIC -->
+  <section id="buscar" class="bg-gradient-to-b from-[#090d16] via-[#040810] to-[#030712] py-24 px-6 border-b border-slate-900 relative">
+    <div class="max-w-4xl mx-auto text-center space-y-6 relative z-10">
       <div class="flex items-center justify-center gap-2 flex-wrap">
-        <span class="bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold px-3 py-1.5 rounded-full">
+        <span class="bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold px-4 py-2 rounded-full shadow-sm shadow-blue-500/5">
           ⚡ Conexão Direta via WhatsApp sem Intermediários
         </span>
-        <button onclick="abrirModalCadastro()" class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full hover:bg-emerald-500/20 transition-all cursor-pointer">
-          📢 É profissional? Cadastre seu perfil por R$ 29,90/mês
+        <button onclick="abrirModalCadastro()" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold px-4 py-2 rounded-full hover:bg-emerald-500/20 transition-all cursor-pointer shadow-sm">
+          📢 É profissional? Cadastre seu perfil
         </button>
       </div>
 
-      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+      <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-[1.1] bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
         Encontre os Melhores Autônomos da Sua Região
       </h1>
-      <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-normal">
-        Eletricistas, pintores, pedreiros, marceneiros e profissionais qualificados prontos para atender seu projeto ou reforma.
+      <p class="text-slate-400 text-sm sm:text-lg max-w-2xl mx-auto font-normal leading-relaxed">
+        Eletricistas, pintores, pedreiros, marceneiros e profissionais qualificados prontos para atender seu projeto ou reforma rápida.
       </p>
 
-      <!-- BARRA DE PESQUISA PARAMETRIZADA -->
-      <div class="bg-slate-800/90 border border-slate-700/80 p-3 rounded-2xl shadow-2xl backdrop-blur-xl mt-8 flex flex-col md:flex-row gap-3">
-        <select id="filterEstado" onchange="executarBuscaWeb()" class="bg-slate-900 border border-slate-700 text-slate-100 text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 font-medium">
-          <option value="SP">SP — São Paulo</option>
-          <option value="RJ">RJ — Rio de Janeiro</option>
-          <option value="MG">MG — Minas Gerais</option>
-        </select>
+      <!-- BARRA DE PESQUISA PREMIUM -->
+      <div class="glass-panel p-4 rounded-3xl shadow-2xl mt-10 flex flex-col lg:flex-row gap-3">
+        <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <select id="filterEstado" onchange="executarBuscaWeb()" class="w-full bg-[#070b13] border border-slate-800 text-slate-200 text-sm rounded-2xl px-4 py-4 focus:outline-none focus:border-blue-500 font-semibold cursor-pointer">
+            <option value="SP">SP — São Paulo</option>
+            <option value="RJ">RJ — Rio de Janeiro</option>
+            <option value="MG">MG — Minas Gerais</option>
+          </select>
 
-        <input type="text" id="filterCidade" value="Campinas" placeholder="Digite sua cidade..." onkeyup="executarBuscaWeb()" class="bg-slate-900 border border-slate-700 text-slate-100 text-sm rounded-xl px-4 py-3.5 flex-1 focus:outline-none focus:border-blue-500 font-medium placeholder-slate-500" />
+          <input 
+            type="text" 
+            id="filterCidade" 
+            value="Campinas" 
+            placeholder="Digite sua cidade..." 
+            onkeyup="executarBuscaWeb()"
+            class="w-full bg-[#070b13] border border-slate-800 text-slate-200 text-sm rounded-2xl px-4 py-4 focus:outline-none focus:border-blue-500 font-semibold placeholder-slate-500"
+          />
 
-        <select id="filterProfissao" onchange="executarBuscaWeb()" class="bg-slate-900 border border-slate-700 text-slate-100 text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 font-medium">
-          <option value="Eletricista">Eletricista</option>
-          <option value="Pintor">Pintor</option>
-          <option value="Pedreiro">Pedreiro</option>
-          <option value="Marceneiro">Marceneiro</option>
-        </select>
+          <select id="filterProfissao" onchange="executarBuscaWeb()" class="w-full bg-[#070b13] border border-slate-800 text-slate-200 text-sm rounded-2xl px-4 py-4 focus:outline-none focus:border-blue-500 font-semibold cursor-pointer">
+            <option value="Eletricista">Eletricista</option>
+            <option value="Pintor">Pintor</option>
+            <option value="Pedreiro">Pedreiro</option>
+            <option value="Marceneiro">Marceneiro</option>
+          </select>
+        </div>
 
-        <button onclick="executarBuscaWeb()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <button onclick="executarBuscaWeb()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-sm px-10 py-4 rounded-2xl transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 transform active:scale-98">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           Buscar
         </button>
       </div>
@@ -222,32 +255,47 @@
   </section>
 
   <!-- CONTEÚDO PRINCIPAL -->
-  <main class="max-w-7xl w-full mx-auto p-6 md:p-8 flex-1 grid grid-cols-1 lg:grid-cols-4 gap-8">
-    <section class="lg:col-span-3 space-y-4">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          Profissionais Encontrados (<span id="countResultados" class="text-blue-400">0</span>)
+  <main class="max-w-7xl w-full mx-auto p-6 md:p-8 flex-1 grid grid-cols-1 lg:grid-cols-4 gap-8 relative z-10">
+    
+    <!-- LISTA DE RESULTADOS DA BUSCA -->
+    <section class="lg:col-span-3 space-y-6">
+      <div class="flex justify-between items-center pb-4 border-b border-slate-800/80">
+        <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
+          Profissionais Ativos (<span id="countResultados" class="text-blue-400">0</span>)
         </h3>
-        <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Perfis Ativos & Verificados
+        <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1.5 rounded-full flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Atualizado Agora
         </span>
       </div>
-      <div id="listaResultadosWeb" class="space-y-4"></div>
+
+      <div id="listaResultadosWeb" class="space-y-4">
+        <!-- Inserido dinamicamente via JS -->
+      </div>
     </section>
 
+    <!-- SIDEBAR DE PUBLICIDADE CONTEXTUAL -->
     <aside class="space-y-4">
-      <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Espaço Patrocinado</div>
-      <div id="bannerPatrocinadoDinamico" class="bg-slate-900 border-2 border-amber-500/40 rounded-2xl p-5 relative overflow-hidden shadow-xl shadow-amber-950/20 space-y-3">
-        <span class="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">Patrocinado</span>
-        <h4 id="adTitulo" class="text-base font-extrabold text-amber-400">EletroForte Distribuidora</h4>
-        <p id="adDescricao" class="text-xs text-slate-300 leading-relaxed">Cabos flexíveis, disjuntores e iluminação LED com 20% OFF para profissionais cadastrados.</p>
-        <a href="#" class="inline-block bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition-colors">Ver Ofertas</a>
+      <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Espaço Patrocinado</div>
+      
+      <div id="bannerPatrocinadoDinamico" class="bg-gradient-to-b from-[#111625] to-[#070b13] border border-amber-500/30 rounded-3xl p-6 relative overflow-hidden shadow-xl space-y-4">
+        <div class="flex justify-between items-center">
+          <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Destaque</span>
+          <span class="text-xs text-slate-500">Ad</span>
+        </div>
+        <div>
+          <h4 id="adTitulo" class="text-base font-extrabold text-amber-400">EletroForte Distribuidora</h4>
+          <p id="adDescricao" class="text-xs text-slate-400 leading-relaxed mt-1">Cabos flexíveis, disjuntores e iluminação LED com 20% OFF para profissionais cadastrados.</p>
+        </div>
+        <a href="#" class="block text-center bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs py-3 rounded-xl transition-all">Ver Ofertas</a>
       </div>
     </aside>
+
   </main>
 
-  <footer class="bg-slate-900 border-t border-slate-800 py-8 px-6 text-center text-xs text-slate-500 space-y-2">
+  <!-- FOOTER -->
+  <footer class="bg-[#04080f] border-t border-slate-900/80 py-10 px-6 text-center text-xs text-slate-500 space-y-2 relative z-10">
     <p>© 2026 Conexão Freelance — Todos os direitos reservados.</p>
+    <p class="text-slate-600">Construído com tecnologia de ponta e infraestrutura de alta velocidade.</p>
   </footer>
 
   <script>
@@ -260,7 +308,11 @@
     let prestadorRecemCadastrado = null;
     let fotoPerfilBase64 = '';
 
-    document.addEventListener('DOMContentLoaded', () => { executarBuscaWeb(); });
+    document.addEventListener('DOMContentLoaded', () => { 
+      executarBuscaWeb(); 
+      // Rastreia PageView do Pixel/CAPI
+      rastrearEvento('PageView');
+    });
 
     // Helper de Rastreamento Unificado (Meta Pixel Client-Side + Conversions API Server-Side)
     function rastrearEvento(eventName, userData = {}, customData = {}) {
@@ -285,8 +337,8 @@
 
     let pollingInterval = null;
 
+    // Controla a exibição do botão de simulação baseado no parâmetro ?debug=true da URL
     function abrirModalCadastro() {
-      // Controla a exibição do botão de simulação baseado no parâmetro ?debug=true da URL
       const urlParams = new URLSearchParams(window.location.search);
       const isDebug = urlParams.get('debug') === 'true';
       const simBtn = document.getElementById('btnSimulacaoPix');
@@ -469,33 +521,39 @@
       document.getElementById('countResultados').innerText = lista.length;
 
       if (lista.length === 0) {
-        container.innerHTML = `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center space-y-3"><div class="text-4xl">🔍</div><h4 class="text-base font-bold text-white">Nenhum profissional ativo encontrado nesta localização</h4></div>`;
+        container.innerHTML = `
+          <div class="bg-[#0b0f19] border border-slate-900 rounded-3xl p-16 text-center space-y-4">
+            <div class="text-5xl">🔍</div>
+            <h4 class="text-lg font-bold text-white">Nenhum profissional ativo encontrado nesta localização</h4>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto">Tente alterar os termos da busca acima ou selecione outro estado.</p>
+          </div>
+        `;
         return;
       }
 
       container.innerHTML = lista.map(p => {
         const avatarHtml = p.foto_perfil_url 
-          ? `<img src="${p.foto_perfil_url}" alt="${p.nome_completo || p.nome}" class="w-14 h-14 rounded-2xl object-cover shadow-md shadow-black/40 border border-slate-700">`
-          : `<div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-black text-xl text-white shadow-md shadow-blue-500/20">${p.nome_completo ? p.nome_completo.charAt(0) : (p.nome ? p.nome.charAt(0) : 'P')}</div>`;
+          ? `<img src="${p.foto_perfil_url}" alt="${p.nome_completo || p.nome}" class="w-16 h-16 rounded-2xl object-cover shadow-lg border border-slate-800">`
+          : `<div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-black text-xl text-white shadow-md">${p.nome_completo ? p.nome_completo.charAt(0) : (p.nome ? p.nome.charAt(0) : 'P')}</div>`;
 
         return `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-slate-700 transition-all shadow-lg">
+          <div class="bg-[#0b0f19]/80 border border-slate-800/80 rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 premium-card relative overflow-hidden">
             <div class="flex items-center gap-4">
               ${avatarHtml}
               <div>
                 <div class="flex items-center gap-2">
-                  <h4 class="font-extrabold text-base text-white">${p.nome_completo || p.nome}</h4>
-                  <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">✓ Ativo</span>
+                  <h4 class="font-extrabold text-lg text-white">${p.nome_completo || p.nome}</h4>
+                  <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">✓ Ativo</span>
                 </div>
                 <p class="text-xs text-slate-400 mt-1">📍 ${p.cidade} - ${p.estado} &nbsp;•&nbsp; ⭐ 5.0 (Avaliações auditadas)</p>
-                <div class="flex gap-2 mt-2">
-                  <span class="bg-slate-800 text-slate-300 text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-slate-700">${p.profissao}</span>
-                  <span class="bg-slate-800 text-slate-300 text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-slate-700">Atendimento Rápido</span>
+                <div class="flex gap-2 mt-3">
+                  <span class="bg-slate-900/80 text-slate-300 text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-800/60">${p.profissao}</span>
+                  <span class="bg-slate-900/80 text-slate-300 text-[10px] font-bold px-3 py-1.5 rounded-xl border border-slate-800/60">Atendimento Rápido</span>
                 </div>
               </div>
             </div>
 
-            <a href="https://wa.me/55${p.whatsapp.replace(/\D/g, '')}" target="_blank" onclick="rastrearContacto('${p.whatsapp}', '${p.profissao}')" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-3 rounded-xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
+            <a href="https://wa.me/55${p.whatsapp.replace(/\D/g, '')}" target="_blank" onclick="rastrearContacto('${p.whatsapp}', '${p.profissao}')" class="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-xs px-6 py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2">
               💬 Contatar no WhatsApp
             </a>
           </div>
