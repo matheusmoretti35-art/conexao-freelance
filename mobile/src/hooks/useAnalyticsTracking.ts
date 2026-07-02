@@ -1,24 +1,5 @@
 import { Platform } from 'react-native';
-
-// Carregamento dinâmico e seguro para evitar erros de compilação caso as dependências ainda não estejam vinculadas
-let requestTrackingPermission: any = null;
-let Settings: any = null;
-let AppEventsLogger: any = null;
-
-try {
-  const attLib = require('react-native-tracking-transparency');
-  requestTrackingPermission = attLib.requestTrackingPermission;
-} catch (e) {
-  // Não instalado
-}
-
-try {
-  const fbSdk = require('react-native-fbsdk-next');
-  Settings = fbSdk.Settings;
-  AppEventsLogger = fbSdk.AppEventsLogger;
-} catch (e) {
-  // Não instalado
-}
+import * as TrackingTransparency from 'expo-tracking-transparency';
 
 /**
  * Solicita permissão de ATT (App Tracking Transparency) no iOS de forma nativa.
@@ -27,12 +8,8 @@ export const solicitarPermissaoATT = async (): Promise<boolean> => {
   if (Platform.OS !== 'ios') return true;
   
   try {
-    if (requestTrackingPermission) {
-      const status = await requestTrackingPermission();
-      return status === 'authorized';
-    }
-    console.log('🔍 [iOS ATT Simulação] Permissão ATT verificada e concedida por padrão.');
-    return true; 
+    const { status } = await TrackingTransparency.requestTrackingPermissionsAsync();
+    return status === 'granted';
   } catch (error) {
     console.warn('Erro ao solicitar permissão ATT:', error);
     return false;
@@ -57,13 +34,7 @@ export const useAnalyticsTracking = () => {
     }
 
     try {
-      // 1. Disparo Client-Side do SDK do Facebook (se estiver instalado e configurado no App)
-      if (AppEventsLogger) {
-        AppEventsLogger.logEvent(eventName, customData);
-        console.log(`📱 [Meta SDK Mobile] Evento ${eventName} disparado via SDK.`);
-      }
-
-      // 2. Disparo Server-Side via CAPI do Railway
+      // Disparo Server-Side via CAPI do Railway (Totalmente seguro e independente de SDKs nativos pesados)
       await fetch('https://conexao-freelance-production.up.railway.app/api/analytics/event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
