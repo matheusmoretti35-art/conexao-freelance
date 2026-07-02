@@ -22,7 +22,7 @@ export const BannerPatrocinado: React.FC<IAnuncioProps> = ({ anuncio }) => {
   const handlePress = async () => {
     try {
       // Registra o clique no backend
-      fetch('http://localhost:3000/api/anuncios/clique', {
+      fetch('https://conexao-freelance-production.up.railway.app/api/anuncios/clique', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ anuncio_id: anuncio.id }),

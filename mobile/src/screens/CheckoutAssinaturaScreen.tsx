@@ -48,7 +48,7 @@ export const CheckoutAssinaturaScreen: React.FC<ICheckoutProps> = ({ prestadorId
   const gerarCobranca = async () => {
     setCarregando(true);
     try {
-      const response = await fetch('http://localhost:3000/api/pagamentos/checkout', {
+      const response = await fetch('https://conexao-freelance-production.up.railway.app/api/pagamentos/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prestador_id: prestadorId, metodo_pagamento: 'pix' }),
@@ -70,7 +70,7 @@ export const CheckoutAssinaturaScreen: React.FC<ICheckoutProps> = ({ prestadorId
 
   const checarStatus = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/pagamentos/status?tx=${transactionId}`);
+      const response = await fetch(`https://conexao-freelance-production.up.railway.app/api/pagamentos/status?tx=${transactionId}`);
       const result = await response.json();
 
       if (result.sucesso && result.status === 'pago') {

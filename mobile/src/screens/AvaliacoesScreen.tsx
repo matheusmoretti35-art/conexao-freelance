@@ -27,7 +27,7 @@ export const AvaliacoesScreen: React.FC<{ prestadorId: string; eDonoDoPerfil: bo
 
   const carregarAvaliacoes = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/avaliacoes/prestador/${prestadorId}`);
+      const res = await fetch(`https://conexao-freelance-production.up.railway.app/api/avaliacoes/prestador/${prestadorId}`);
       const data = await res.json();
       if (res.ok && data.sucesso) {
         setAvaliacoes(data.dados);
@@ -46,7 +46,7 @@ export const AvaliacoesScreen: React.FC<{ prestadorId: string; eDonoDoPerfil: bo
     }
 
     try {
-      const res = await fetch('http://localhost:3000/api/avaliacoes/replica', {
+      const res = await fetch('https://conexao-freelance-production.up.railway.app/api/avaliacoes/replica', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avaliacao_id: avaliacaoId, prestador_id: prestadorId, resposta: texto }),

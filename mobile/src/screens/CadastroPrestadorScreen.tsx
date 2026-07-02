@@ -137,7 +137,7 @@ export const CadastroPrestadorScreen: React.FC = () => {
 
     setCarregando(true);
     try {
-      const resposta = await fetch('http://localhost:3000/api/prestadores', {
+      const resposta = await fetch('https://conexao-freelance-production.up.railway.app/api/prestadores', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
