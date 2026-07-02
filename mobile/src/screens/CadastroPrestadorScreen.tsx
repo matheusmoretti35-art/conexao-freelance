@@ -43,7 +43,11 @@ interface IFormState {
   fotoPerfilUrl: string;
 }
 
-export const CadastroPrestadorScreen: React.FC = () => {
+interface ICadastroProps {
+  onCadastroSucesso: (id: string) => void;
+}
+
+export const CadastroPrestadorScreen: React.FC<ICadastroProps> = ({ onCadastroSucesso }) => {
   const { rastrearEvento } = useAnalyticsTracking();
 
   // Estado principal do formulário
@@ -163,10 +167,12 @@ export const CadastroPrestadorScreen: React.FC = () => {
           'Seu perfil foi registrado com sucesso e está pendente de ativação para começar a receber clientes.',
           [
             {
-              text: 'OK',
+              text: 'Pagar Assinatura',
               onPress: () => {
+                const prestadorId = resultado.dados?.id || 'temp';
                 // Limpa o formulário após sucesso
                 setFormData({ nomeCompleto: '', whatsapp: '', cidade: '', estado: '', profissao: '', fotoPerfilUrl: '' });
+                onCadastroSucesso(prestadorId);
               },
             },
           ]
